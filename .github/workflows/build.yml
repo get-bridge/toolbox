@@ -26,13 +26,12 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           GIT_HUB_PACKAGES_ACTOR: ${{ secrets.GIT_HUB_PACKAGES_ACTOR }}
           GIT_HUB_PACKAGES_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_TOKEN }}
-          DOCKERFILE_PATH: ${{ inputs.dockerfile_path }}
         run: |
           docker build \
             --build-arg GIT_HUB_PACKAGES_ACTOR \
             --build-arg GIT_HUB_PACKAGES_TOKEN \
             -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            . -f $DOCKERFILE_PATH
+            .
 
       - name: Push Docker image to AWS ECR
         env:
