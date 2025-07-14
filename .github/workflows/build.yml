@@ -1,18 +1,43 @@
 name: Docker Image CI
 
 on: [push]
-
 jobs:
-  build:
+  upload-docker-image:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
-      - name: Build & Push to Docker Hub
-        uses: opspresso/action-docker@master
+      - uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.TRUSS_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TRUSS_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
         env:
-          USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          IMAGE_NAME: "jdharrington/toolbox"
-          TAG_NAME: ${{ env.GITHUB_SHA }}
-          LATEST: "true"
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ inputs.image_name }}
+          IMAGE_TAG: ${{ github.sha }}
+          GIT_HUB_PACKAGES_ACTOR: ${{ secrets.GIT_HUB_PACKAGES_ACTOR }}
+          GIT_HUB_PACKAGES_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_TOKEN }}
+          DOCKERFILE_PATH: ${{ inputs.dockerfile_path }}
+        run: |
+          docker build \
+            --build-arg GIT_HUB_PACKAGES_ACTOR \
+            --build-arg GIT_HUB_PACKAGES_TOKEN \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            . -f $DOCKERFILE_PATH
+
+      - name: Push Docker image to AWS ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ inputs.image_name }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
