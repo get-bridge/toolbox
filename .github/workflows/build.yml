@@ -22,7 +22,7 @@ jobs:
       - name: Build Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ inputs.image_name }}
+          ECR_REPOSITORY: toolbox
           IMAGE_TAG: ${{ github.sha }}
           GIT_HUB_PACKAGES_ACTOR: ${{ secrets.GIT_HUB_PACKAGES_ACTOR }}
           GIT_HUB_PACKAGES_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_TOKEN }}
