@@ -24,6 +24,7 @@ jobs:
       
       - name: Create ECR repository if not exists
         uses: int128/create-ecr-repository-action@v1
+        id: ecr
         with:
           repository: ${{ env.ECR_REPOSITORY }}
 
