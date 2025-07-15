@@ -21,6 +21,11 @@ jobs:
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
+      
+      - name: Create ECR repository if not exists
+        uses: int128/create-ecr-repository-action@v1
+        with:
+          repository: ${{ env.ECR_REPOSITORY }}
 
       - name: Build Docker image
         env:
