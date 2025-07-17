@@ -7,4 +7,3 @@ if [ "${1}" = "" ]; then
 else
   exec "$@"
 fi
-s
