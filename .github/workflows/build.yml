@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.TRUSS_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.TRUSS_AWS_SECRET_ACCESS_KEY }}
@@ -20,7 +20,7 @@ jobs:
 
       - name: Login to AWS ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
       
       - name: Create ECR repository if not exists
         uses: int128/create-ecr-repository-action@v1
@@ -37,10 +37,8 @@ jobs:
           GIT_HUB_PACKAGES_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_TOKEN }}
         run: |
           docker build \
-            --build-arg GIT_HUB_PACKAGES_ACTOR \
-            --build-arg GIT_HUB_PACKAGES_TOKEN \
-            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            .
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+            
 
       - name: Push Docker image to AWS ECR
         env:
