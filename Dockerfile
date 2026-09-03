@@ -13,7 +13,8 @@ ENV VAULT_ADDR https://vault.vault.svc:8200
 ENV VAULT_SKIP_VERIFY true
 
 # kubectl
-ADD https://dl.k8s.io/release/v1.34.11/bin/linux/amd64/kubectl /usr/bin/kubectl
+ADD --checksum=sha256:8efbb9435132a190920eb65a47a8c1ecf755ad85ab57a600c9bedbab460bb7a8 \
+    https://dl.k8s.io/release/v1.34.11/bin/linux/amd64/kubectl /usr/bin/kubectl
 RUN chmod +x /usr/bin/kubectl
 
 # AWS CLI
