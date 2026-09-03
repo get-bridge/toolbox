@@ -13,7 +13,8 @@ ENV VAULT_ADDR https://vault.vault.svc:8200
 ENV VAULT_SKIP_VERIFY true
 
 # kubectl
-COPY --from=bitnami/kubectl:1.33.2 /opt/bitnami/kubectl/bin/kubectl /usr/bin/kubectl
+ADD https://dl.k8s.io/release/v1.34.11/bin/linux/amd64/kubectl /usr/bin/kubectl
+RUN chmod +x /usr/bin/kubectl
 
 # AWS CLI
 RUN apk add --no-cache aws-cli
